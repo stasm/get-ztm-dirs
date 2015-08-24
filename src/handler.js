@@ -18,7 +18,7 @@ export default {
 
 function print(dirs) {
   console.log(
-    'dirs = ' + JSON.stringify(dirs, null, 2));
+    'dirs = ' + JSON.stringify(dirs, null, 2) + ';');
 }
 
 function getDirections(seq, cur) {
