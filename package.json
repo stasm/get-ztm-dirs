@@ -12,6 +12,8 @@
   "repository": "stasm/get-ztm-dirs",
   "dependencies": {
     "babel": "^5.8.21",
+    "date-utils": "^1.2.17",
+    "minimist": "^1.2.0",
     "ztm-parser": "git+https://github.com/stasm/ztm-parser.git#parse-route-descriptors"
   }
 }
