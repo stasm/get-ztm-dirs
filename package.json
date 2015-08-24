@@ -7,8 +7,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Staś Małolepszy <stas@mozilla.com>",
   "license": "ISC",
+  "repository": "stasm/get-ztm-dirs",
   "dependencies": {
     "babel": "^5.8.21",
     "ztm-parser": "git+https://github.com/stasm/ztm-parser.git#parse-route-descriptors"
