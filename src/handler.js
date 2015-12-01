@@ -5,8 +5,8 @@ const dirs = {
   M1B: 'M1 → Młociny',
   M2A: 'M2 → Dworzec Wileński',
   M2B: 'M2 → Rondo Daszyńskiego',
+  X0A: '666 → Plac Testerów'
 };
-
 
 export default {
   onGetSchedules: function(res) {
