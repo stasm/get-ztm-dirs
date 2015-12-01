@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Parse ZTM schedules into a list of lines and directions.",
   "main": "src/handler.js",
-  "bin": "bin/cli.js",
+  "bin": "dist/cli.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -11,9 +11,12 @@
   "license": "ISC",
   "repository": "stasm/get-ztm-dirs",
   "dependencies": {
-    "babel": "^5.8.21",
     "date-utils": "^1.2.17",
     "minimist": "^1.2.0",
     "ztm-parser": "git+https://github.com/stasm/ztm-parser.git#parse-route-descriptors"
+  },
+  "devDependencies": {
+    "babel-core": "^6.2.1",
+    "babel-plugin-array-includes": "^1.1.1"
   }
 }
