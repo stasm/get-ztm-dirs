@@ -23,7 +23,7 @@ export function createHandler() {
     },
     onGetBusStops: function(res) {
       for (let id in res) {
-        Object.assign(data[id], getCenterOfMass(res[id]));
+        Object.assign(data[id], getCentroid(res[id]));
       }
     },
     onGetSchedules: function(res) {
@@ -46,9 +46,16 @@ function getDirectionsForLine(name, route) {
   };
 }
 
-function getCenterOfMass(stops) {
+function getCentroid(stops) {
+  // approximate the center of mass of the polygon given by all the stops 
+  // in the stop gropu by calculating the centroid of vertices
+  const sum = stops.reduce(
+    (centroid, stop) => Object.assign(centroid, {
+      x: centroid.x + parseFloat(stop.xGPS),
+      y: centroid.y + parseFloat(stop.yGPS),
+    }), { x: 0, y: 0 });
   return {
-    x: 52,
-    y: 21
+    x: sum.x / stops.length,
+    y: sum.y / stops.length,
   };
 }
