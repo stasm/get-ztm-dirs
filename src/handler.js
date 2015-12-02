@@ -1,8 +1,6 @@
 'use strict';
 
 export default function createHandler() {
-  const names = {};
-  const coords = {};
   const data = {
     stops: {},
     linedirs: {
@@ -43,13 +41,15 @@ export default function createHandler() {
 
 function getDirections(seq, cur) {
   return Object.assign(
-    seq, ...cur.routes.map(
-      route => getDirectionsForLine(cur.id, route)));
+    seq, ...(cur.routes.map(
+      route => getDirectionsForLine(cur.id, route))));
 }
 
-function getDirectionsForLine(id, route) {
+function getDirectionsForLine(name, route) {
   return {
-    [id + route.dir]: id + ' → ' + route.end.name,
+    [name + route.dir]: {
+      name: name + ' → ' + route.end.name
+    }
   };
 }
 
