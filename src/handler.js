@@ -2,14 +2,11 @@
 
 export function createHandler() {
   const data = {
-    stops: {},
-    linedirs: {
-      M1A: 'M1 → Kabaty',
-      M1B: 'M1 → Młociny',
-      M2A: 'M2 → Dworzec Wileński',
-      M2B: 'M2 → Rondo Daszyńskiego',
-      X0A: '666 → Plac Testerów'
-    },
+    M1A: 'M1 → Kabaty',
+    M1B: 'M1 → Młociny',
+    M2A: 'M2 → Dworzec Wileński',
+    M2B: 'M2 → Rondo Daszyńskiego',
+    X0A: '666 → Plac Testerów'
   };
 
   return {
@@ -17,7 +14,7 @@ export function createHandler() {
       for (let stop of res) {
         const name = stop.cityCode === '--' ?
           stop.name : stop.name + ', ' + stop.cityName;
-        Object.assign(data.stops, {
+        Object.assign(data, {
           [stop.id.toString()]: {
             name: name
           }
@@ -26,24 +23,20 @@ export function createHandler() {
     },
     onGetBusStops: function(res) {
       for (let id in res) {
-        Object.assign(data.stops[id], getCenterOfMass(res[id]));
+        Object.assign(data[id], getCenterOfMass(res[id]));
       }
     },
     onGetSchedules: function(res) {
-      data.linedirs = res.schedule.reduce(
-        getDirections, data.linedirs);
+      for (let line of res.schedule) {
+        Object.assign(data, ...(line.routes.map(
+          route => getDirectionsForLine(line.id, route))));
+      }
     },
     get data() {
       return data;
     }
   };
 };
-
-function getDirections(seq, cur) {
-  return Object.assign(
-    seq, ...(cur.routes.map(
-      route => getDirectionsForLine(cur.id, route))));
-}
 
 function getDirectionsForLine(name, route) {
   return {
