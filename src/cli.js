@@ -26,9 +26,8 @@ var date = argv._.length ?
 
 var ztm = require('ztm-parser');
 
-require('babel/register');
-var handler = require('../src/handler');
-var picker = require('../src/picker');
+var handler = require('./handler');
+var picker = require('./picker');
 
 
 ztm.getDataSourcesURLs().then(function(urls) {
