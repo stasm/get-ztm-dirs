@@ -15,32 +15,27 @@ export default function createHandler() {
   };
 
   return {
-    onGetSchedules: function(res) {
-      data.linedirs = res.schedule.reduce(
-        getDirections, data.linedirs);
-    },
     onGetBusStopsGroups: function(res) {
       for (let stop of res) {
         const name = stop.cityCode === '--' ?
           stop.name : stop.name + ', ' + stop.cityName;
-        Object.assign(names, {
-          [stop.id.toString()]: name
+        Object.assign(data.stops, {
+          [stop.id.toString()]: {
+            name: name
+          }
         });
       }
     },
     onGetBusStops: function(res) {
       for (let id in res) {
-        Object.assign(coords, {
-          [id]: getCenterOfMass(res[id])
-        });
+        Object.assign(data.stops[id], getCenterOfMass(res[id]));
       }
     },
+    onGetSchedules: function(res) {
+      data.linedirs = res.schedule.reduce(
+        getDirections, data.linedirs);
+    },
     get data() {
-      for (let id in names) {
-        Object.assign(data.stops, {
-          [names[id]]: coords[id]
-        });
-      }
       return data;
     }
   };
