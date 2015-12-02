@@ -26,9 +26,13 @@ var date = argv._.length ?
 
 var ztm = require('ztm-parser');
 
-var handler = require('./handler');
+var handler = require('./handler')();
 var picker = require('./picker');
 
+function print(data) {
+  console.log(
+    'ztm = ' + JSON.stringify(data, null, 2) + ';');
+}
 
 ztm.getDataSourcesURLs().then(function(urls) {
   var url = picker.getLatestRelevant(urls, date);
