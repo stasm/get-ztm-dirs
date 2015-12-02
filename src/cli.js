@@ -1,11 +1,24 @@
 #!/usr/bin/env node
 'use strict';
 
-var argv = require('minimist')(process.argv.slice(2));
+import minimist from 'minimist';
+import { getRemote, getLocal, print } from './main';
 
-if (argv.h || argv.help) {
+const argv = minimist(process.argv.slice(2), {
+  string: ['local'],
+  alias: {
+    date: 'd',
+    help: 'h',
+    local: 'l',
+  },
+  default: {
+    date: new Date(),
+  }
+});
+
+if (argv.help) {
   console.log();
-  console.log('  Usage: get-ztm-dirs [DATE]');
+  console.log('  Usage: get-ztm-dirs [OPTIONS]');
   console.log();
   console.log('  Parse the ZTM schedules into an object of line directions.');
   console.log('  DATE can be an RFC2822 or ISO 8601-formatted date, e.g.:');
@@ -16,27 +29,14 @@ if (argv.h || argv.help) {
   console.log('  Options:');
   console.log();
   console.log('        -h, --help           output usage information');
+  console.log('        -d, --date DATE      fetch schedules from this date');
+  console.log('        -l, --local FILE     use a local db file');
   console.log();
   process.exit();
 }
 
-var date = argv._.length ?
-  new Date(argv._.join(' ')) :
-  new Date();
+const data = argv.local ?
+  getLocal(argv.local) :
+  getRemote(argv.date);
 
-var ztm = require('ztm-parser');
-
-var handler = require('./handler')();
-var picker = require('./picker');
-
-function print(data) {
-  console.log(
-    'ztm = ' + JSON.stringify(data, null, 2) + ';');
-}
-
-ztm.getDataSourcesURLs().then(function(urls) {
-  var url = picker.getLatestRelevant(urls, date);
-  ztm.parseZTMDataSource(url, handler);
-}).catch(function(err) {
-  console.log(err);
-});
+data.then(print, console.error);

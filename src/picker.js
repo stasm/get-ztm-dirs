@@ -1,6 +1,6 @@
 'use strict';
 
-require('date-utils');
+import 'date-utils';
 
 export function getLatestRelevant(urls, date) {
   const pos = urls.indexOf(formatURL(date));

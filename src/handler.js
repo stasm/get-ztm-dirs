@@ -1,6 +1,6 @@
 'use strict';
 
-export default function createHandler() {
+export function createHandler() {
   const data = {
     stops: {},
     linedirs: {
