@@ -1,6 +1,6 @@
 {
   "name": "get-ztm-dirs",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Parse ZTM schedules into a list of lines and directions.",
   "main": "src/handler.js",
   "bin": "dist/cli.js",
