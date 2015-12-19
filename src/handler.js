@@ -23,7 +23,8 @@ export function createHandler() {
     },
     onGetBusStops: function(res) {
       for (let id in res) {
-        Object.assign(data[id], getCentroid(res[id]), getLines(res[id]));
+        Object.assign(
+          data[id], getCentroid(res[id]), getDirs(res[id]));
         // console.log(data[id]);
       }
     },
@@ -62,23 +63,33 @@ function getCentroid(stops) {
   };
 }
 
-function getLines(stops) {
+function getDirs(stops) {
   return {
-    lines: stops.reduce(
-      (seq, cur) => seq.concat(
-        flattenLines(cur.lines, cur.destination)), [])
+    dirs: stops.reduce(groupByDestination, {})
   };
+}
+
+function groupByDestination(dests, stop) {
+  const dest = nameDestination(stop.destination);
+  const prev = dests[dest] || [];
+  return Object.assign(dests, {
+    [dest]: prev.concat(flattenLines(stop.lines, dest))
+  });
 }
 
 function flattenLines(lines, dest) {
   const flat = new Set();
   for (let type in lines) {
     lines[type].forEach(
-      line => flat.add(makeName(line, dest)));
+      line => flat.add(nameLine(line)));
   }
   return Array.from(flat);
 }
 
-function makeName(line, dest) {
-  return line.replace('^', '') + ' → ' + dest.replace('Kier.: ', '');
+function nameLine(line) {
+  return line.replace('^', '');
+}
+
+function nameDestination(dest) {
+  return dest.replace('Kier.: ', '');
 }
