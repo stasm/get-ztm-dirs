@@ -6,6 +6,10 @@ import { getLatestRelevant } from './picker';
 
 const handler = createHandler();
 
+const noop = {
+  log: () => ({})
+};
+
 export function print() {
   console.log(
     'ztm = ' + JSON.stringify(handler.data, null, 2) + ';');

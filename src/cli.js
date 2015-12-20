@@ -39,4 +39,6 @@ const data = argv.local ?
   getLocal(argv.local) :
   getRemote(argv.date);
 
-data.then(print, console.error);
+  data
+  .then(print)
+  .catch(console.error);
