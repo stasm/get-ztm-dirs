@@ -1,7 +1,8 @@
 'use strict';
 
 export function createHandler() {
-  const data = {
+  const stops = {};
+  const lines = {
     M1A: 'M1 → Kabaty',
     M1B: 'M1 → Młociny',
     M2A: 'M2 → Dworzec Wileński',
@@ -14,7 +15,7 @@ export function createHandler() {
       for (let stop of res) {
         const name = stop.cityCode === '--' ?
           stop.name : stop.name + ', ' + stop.cityName;
-        Object.assign(data, {
+        Object.assign(stops, {
           [stop.id.toString()]: {
             name: name
           }
@@ -24,19 +25,22 @@ export function createHandler() {
     onGetBusStops: function(res) {
       for (let id in res) {
         Object.assign(
-          data[id], getCentroid(res[id]), getDirs(res[id]));
-        // console.log(data[id]);
+          stops[id], getCentroid(res[id]), getDirs(res[id]));
+        // console.log(stops[id]);
       }
     },
     onGetSchedules: function(res) {
       for (let line of res.schedule) {
-        // console.log(data[line.routes[0].stops[0].id.slice(0,4)]);
-        Object.assign(data, ...(line.routes.map(
+        // console.log(lines[line.routes[0].stops[0].id.slice(0,4)]);
+        Object.assign(lines, ...(line.routes.map(
           route => getDirectionsForLine(line.id, route))));
       }
     },
-    get data() {
-      return data;
+    get lines() {
+      return lines;
+    },
+    get stops() {
+      return stops;
     }
   };
 };

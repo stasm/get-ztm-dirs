@@ -11,8 +11,10 @@ const noop = {
 };
 
 export function print() {
-  console.log(
-    'ztm = ' + JSON.stringify(handler.data, null, 2) + ';');
+  console.log('ztm = {');
+  console.log('  lines: ' + JSON.stringify(handler.lines, null, 2) + ',');
+  console.log('  stops: ' + JSON.stringify(handler.stops, null, 2));
+  console.log('};');
 }
 
 export function getLocal(path) {
