@@ -26,7 +26,7 @@ export function createHandler() {
       for (let id in res) {
         Object.assign(
           stops[id], getCentroid(res[id]), getDirs(res[id]));
-        // console.log(stops[id]);
+        console.log(stops[id].name, stops[id].lines);
       }
     },
     onGetSchedules: function(res) {
@@ -67,17 +67,31 @@ function getCentroid(stops) {
   };
 }
 
+function getSubstops(id, stops) {
+  return {
+    subs: stops.map(stop => id + pad(stop.busStopId))
+  };
+}
+
+function pad(num) {
+  return num < 10 ? '0' + num : num.toString();
+}
+
 function getDirs(stops) {
   return {
-    dirs: stops.reduce(groupByDestination, {})
+    lines: stops.reduce(groupByDestination, {})
   };
 }
 
 function groupByDestination(dests, stop) {
   const dest = nameDestination(stop.destination);
-  const prev = dests[dest] || [];
+  const prev = dests[dest] || { subs: [], lines: [] };
+  console.log( dest, stop.busStopId);
   return Object.assign(dests, {
-    [dest]: prev.concat(flattenLines(stop.lines, dest))
+    [dest]: {
+      subs: prev.subs.concat(pad(stop.busStopId)),
+      lines: prev.lines.concat(flattenLines(stop.lines, dest))
+    }
   });
 }
 
