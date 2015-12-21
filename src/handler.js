@@ -1,7 +1,10 @@
 'use strict';
 
 export function createHandler() {
-  const routes = {};
+  const info = {
+    routes: {},
+    types: {},
+  };
   const stops = {};
   const lines = {
     M1A: 'M1 → Kabaty',
@@ -31,11 +34,11 @@ export function createHandler() {
     },
     onGetSchedules: function(res) {
       for (let line of res.schedule) {
-        // console.log(lines[line.routes[0].stops[0].id.slice(0,4)]);
         Object.assign(lines, ...(line.routes.map(
           route => getDirectionsForLine(line.id, route))));
-        Object.assign(routes, ...(line.routes.map(
-          route => getRoutesForLine(line.id, route))));
+        Object.assign(info.routes, ...(line.routes.map(
+          route => getInfoForLine(line.id, route))));
+        Object.assign(info.types, getLineType(res.lineTypeNames, line));
       }
     },
     get lines() {
@@ -43,13 +46,14 @@ export function createHandler() {
     },
     get stops() {
       for (let stopid in stops) {
-        const stoproutes = stops[stopid].routes;
-        for (let dest in stoproutes) {
-          const samedest = stoproutes[dest];
+        const routes = stops[stopid].routes;
+        for (let dest in routes) {
+          const samedest = routes[dest];
           const subs = samedest.subs.map(sub => stopid + sub);
           samedest.dirs = [];
+          samedest.types = getTypes(info.types, samedest.lines);
           for (let line of samedest.lines) {
-            const dir = getDirForRoute(routes, line, subs);
+            const dir = getDirForRoute(info.routes, line, subs);
             if (dir) {
               samedest.dirs.push(dir);
             }
@@ -62,6 +66,30 @@ export function createHandler() {
     }
   };
 };
+
+function getTypes(types, lines) {
+  const uniques = lines.reduce(
+    (seq, cur) => seq.add(types[cur]), new Set());
+  return Array.from(uniques);
+}
+
+const retram = /TRAMWAJOWA/;
+const reskm = /KOLEI MIEJSKIEJ/;
+const rewkd = /KOLEI DOJAZDOWEJ/;
+const rekm = /KOLEI MAZOWIECKICH/;
+
+function getLineType(types, line) {
+  const type = types[line.type];
+  const shorttype = retram.test(type) ?
+    'tram' : reskm.test(type) ?
+    'skm' : rewkd.test(type) ?
+    'wkd' : rekm.test(type) ?
+    'km' : 'bus';
+
+  return {
+    [line.id]: shorttype
+  };
+}
 
 function includes(arr, elem) {
   return arr.indexOf(elem) > -1;
@@ -81,7 +109,7 @@ function getDirForRoute(routes, line, subs) {
   return null;
 }
 
-function getRoutesForLine(name, route) {
+function getInfoForLine(name, route) {
   return {
     [name + route.dir]: route.stops.map(
       stop => stop.id)
