@@ -1,6 +1,7 @@
 'use strict';
 
 export function createHandler() {
+  const routes = {};
   const stops = {};
   const lines = {
     M1A: 'M1 → Kabaty',
@@ -26,7 +27,6 @@ export function createHandler() {
       for (let id in res) {
         Object.assign(
           stops[id], getCentroid(res[id]), getDirs(res[id]));
-        console.log(stops[id].name, stops[id].lines);
       }
     },
     onGetSchedules: function(res) {
@@ -34,16 +34,59 @@ export function createHandler() {
         // console.log(lines[line.routes[0].stops[0].id.slice(0,4)]);
         Object.assign(lines, ...(line.routes.map(
           route => getDirectionsForLine(line.id, route))));
+        Object.assign(routes, ...(line.routes.map(
+          route => getRoutesForLine(line.id, route))));
       }
     },
     get lines() {
       return lines;
     },
     get stops() {
+      for (let stopid in stops) {
+        const stoproutes = stops[stopid].routes;
+        for (let dest in stoproutes) {
+          const samedest = stoproutes[dest];
+          const subs = samedest.subs.map(sub => stopid + sub);
+          samedest.dirs = [];
+          for (let line of samedest.lines) {
+            const dir = getDirForRoute(routes, line, subs);
+            if (dir) {
+              samedest.dirs.push(dir);
+            }
+          }
+          delete samedest.subs;
+          delete samedest.lines;
+        }
+      }
       return stops;
     }
   };
 };
+
+function includes(arr, elem) {
+  return arr.indexOf(elem) > -1;
+}
+
+function getDirForRoute(routes, line, subs) {
+  const a = routes[line + 'A'];
+  if (a && subs.some(sub => includes(a, sub))) {
+    return line + 'A';
+  }
+
+  const b = routes[line + 'B'];
+  if (b && subs.some(sub => includes(b, sub))) {
+    return line + 'B';
+  }
+
+  return null;
+}
+
+function getRoutesForLine(name, route) {
+  return {
+    [name + route.dir]: route.stops.map(
+      stop => stop.id)
+  };
+}
 
 function getDirectionsForLine(name, route) {
   return {
@@ -67,26 +110,19 @@ function getCentroid(stops) {
   };
 }
 
-function getSubstops(id, stops) {
-  return {
-    subs: stops.map(stop => id + pad(stop.busStopId))
-  };
-}
-
 function pad(num) {
   return num < 10 ? '0' + num : num.toString();
 }
 
 function getDirs(stops) {
   return {
-    lines: stops.reduce(groupByDestination, {})
+    routes: stops.reduce(groupByDestination, {})
   };
 }
 
 function groupByDestination(dests, stop) {
   const dest = nameDestination(stop.destination);
   const prev = dests[dest] || { subs: [], lines: [] };
-  console.log( dest, stop.busStopId);
   return Object.assign(dests, {
     [dest]: {
       subs: prev.subs.concat(pad(stop.busStopId)),
