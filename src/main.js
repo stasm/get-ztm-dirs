@@ -1,5 +1,3 @@
-'use strict';
-
 import ztm from 'ztm-parser';
 import { createHandler } from './handler';
 import { getLatestRelevant } from './picker';
@@ -21,8 +19,8 @@ export function getLocal(path) {
   return ztm.parseZTMDataFile(path, handler);
 }
 
-export function getRemote(data) {
+export function getRemote(date) {
   return ztm.getDataSourcesURLs()
-    .then(urls => picker.getLatestRelevant(urls, date))
+    .then(urls => getLatestRelevant(urls, date))
     .then(url => ztm.parseZTMDataSource(url, handler));
 }

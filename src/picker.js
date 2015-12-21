@@ -1,5 +1,3 @@
-'use strict';
-
 import 'date-utils';
 
 export function getLatestRelevant(urls, date) {
