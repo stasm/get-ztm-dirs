@@ -1,4 +1,4 @@
-import { lines as fLines } from './fixtures';
+import { extendLines } from './fixtures';
 import { getStopName, getCentroid, getDirs } from './stops';
 import { getDirectionsForLine, getInfoForLine, getLineType } from './lines';
 import { includes } from './util';
@@ -35,7 +35,7 @@ export function createHandler() {
       }
     },
     get lines() {
-      return Object.assign(lines, fLines);
+      return extendLines(lines);
     },
     get stops() {
       for (let stopid in stops) {
