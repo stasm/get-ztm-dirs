@@ -1,25 +1,26 @@
-export function extendLines(lines) {
-  return Object.assign(lines, {
-    M1A: {
-      name: 'M1 → KABATY'
-    },
-    M1B: {
-      name: 'M1 → MŁOCINY'
-    },
-    M2A: {
-      name: 'M2 → DWORZEC WILEŃSKI'
-    },
-    M2B: {
-      name: 'M2 → RONDO DASZYŃSKIEGO'
-    },
-    X0A: {
-      name: '666 → PLAC TESTERÓW'
-    },
-  });
+const extraLines = {
+  M1A: {
+    name: 'M1 → KABATY'
+  },
+  M1B: {
+    name: 'M1 → MŁOCINY'
+  },
+  M2A: {
+    name: 'M2 → DWORZEC WILEŃSKI'
+  },
+  M2B: {
+    name: 'M2 → RONDO DASZYŃSKIEGO'
+  },
+  X0A: {
+    name: '666 → PLAC TESTERÓW'
+  },
 };
 
+export function extendLines(lines) {
+  return Object.assign(lines, extraLines);
+};
 
-const extraLines = {
+const extraRoutes = {
   m1: [
     'METRO MŁOCINY',
     'METRO WAWRZYSZEW',
@@ -75,17 +76,17 @@ function findByName(stops, name) {
 export function extendStops(stops) {
   stops = Object.assign(stops, extraStops);
 
-  for (const m in extraLines) {
+  for (const m in extraRoutes) {
     const dirs = [
       [(m + 'a').toUpperCase(), 1],
       [(m + 'b').toUpperCase(), -1]
     ];
-    const stations = extraLines[m];
+    const stations = extraRoutes[m];
 
     for (const [index, name] of stations.entries()) {
       const stop = findByName(stops, name);
       if (!stop) {
-        console.error(name);
+        console.error('Missing stop: ', name);
         continue;
       }
 
