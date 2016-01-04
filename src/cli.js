@@ -41,4 +41,4 @@ const data = argv.local ?
 
   data
   .then(print)
-  .catch(console.error);
+  .catch(e => console.error(e.stack));

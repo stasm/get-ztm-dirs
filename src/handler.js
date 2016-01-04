@@ -1,4 +1,4 @@
-import { extendLines } from './fixtures';
+import { extendLines, extendStops } from './fixtures';
 import { getStopName, getCentroid, getDirs } from './stops';
 import { getDirectionsForLine, getInfoForLine, getLineType } from './lines';
 import { includes } from './util';
@@ -55,7 +55,7 @@ export function createHandler() {
           delete samedest.lines;
         }
       }
-      return stops;
+      return extendStops(stops);
     }
   };
 };
